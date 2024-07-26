@@ -1,36 +1,4 @@
-import numpy as np
-
-
-class Card:
-
-    def __init__(self, name, types=None, desc=None, face_up=False):
-        if types is None:
-            types = []
-        self.name = name
-        self.types = np.array(types)
-        self.desc = desc
-        self.face_up = face_up
-
-    def pushDesc(self, func):
-        self.desc = func
-
-    def isType(self, typ):
-        return len(np.intersect1d(self.types, np.array(typ))) > 0
-
-    def __str__(self):
-        return self.name
-
-    def describe(self):
-        return "The " + self.name + "." + self.desc
-
-    def flip_up(self):
-        self.face_up = True
-
-    def flip_down(self):
-        self.face_up = False
-
-    def hasName(self, name):
-        return self.name.lower() == name.lower()
+from Card import *
 
 
 class Pile:
@@ -109,27 +77,27 @@ class Pile:
         for card in self.cards:
             card.face_up = False
 
-    def pile2Pile(self, outlet):
-        picking = True
-        while picking:
-            inp = input('Choose a card to discard: ').lower()
-            if inp in self.toList():
-                ind = 0
-                found = False
-                while ind < self.size() and not found:
-                    if self.toList()[ind] == inp:
-                        outlet.push(self.cards[ind])
-                        self.cards.remove(self.cards[ind])
-                        found = True
-                    else:
-                        ind += 1
-                picking = False
-            else:
-                print('Valid input please!')
+    def discard_pick(self, outlet):
+        choice = choose_name_from_options(self.toList(), 'Choose a card to discard: ')
+        for i in range(self.size()):
+            if self.toList()[i] == choice:
+                outlet.push(self.cards[i])
+                self.cards.remove(self.cards[i])
+                break
 
     @staticmethod
     def merge(p1, p2, new_name):
         return Pile(new_name, p1.cards + p2.cards)
+
+
+def choose_name_from_options(options, prompt, catch='Valid input please!'):
+    picking = True
+    while picking:
+        choice = input(prompt).lower()
+        if choice in [option.lower() for option in options]:
+            return choice
+        else:
+            print(catch)
 
 
 # All the cards
