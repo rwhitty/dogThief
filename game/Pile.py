@@ -15,7 +15,7 @@ class Card:
         self.desc = func
 
     def isType(self, typ):
-        return np.intersect1d(self.types, np.array(typ)).size > 0
+        return len(np.intersect1d(self.types, np.array(typ))) > 0
 
     def __str__(self):
         return self.name
@@ -28,6 +28,9 @@ class Card:
 
     def flip_down(self):
         self.face_up = False
+
+    def hasName(self, name):
+        return self.name.lower() == name.lower()
 
 
 class Pile:
@@ -43,7 +46,7 @@ class Pile:
         return len(self.cards)
 
     def push(self, item):
-        self.cards.push(item)
+        self.cards.append(item)
 
     def peek_top(self, n=1, pop=False):
         out = self.cards[-n:]
@@ -70,10 +73,16 @@ class Pile:
         return out
 
     def __str__(self):
-        out = ""
+        out = self.name + ":"
         for card in self.cards:
-            out += card.name + " "
-        return out[0:len(out) - 1]
+            out += " " + card.name
+        return out
+
+    def toList(self):
+        out = []
+        for card in self.cards:
+            out += [card.name.lower()]
+        return out
 
     def copy(self, new_name):
         return Pile(new_name, self.cards)
@@ -100,15 +109,27 @@ class Pile:
         for card in self.cards:
             card.face_up = False
 
+    def pile2Pile(self, outlet):
+        picking = True
+        while picking:
+            inp = input('Choose a card to discard: ').lower()
+            if inp in self.toList():
+                ind = 0
+                found = False
+                while ind < self.size() and not found:
+                    if self.toList()[ind] == inp:
+                        outlet.push(self.cards[ind])
+                        self.cards.remove(self.cards[ind])
+                        found = True
+                    else:
+                        ind += 1
+                picking = False
+            else:
+                print('Valid input please!')
+
     @staticmethod
     def merge(p1, p2, new_name):
         return Pile(new_name, p1.cards + p2.cards)
-
-    @staticmethod
-    def pile2Pile(into, outo, count=1):
-        while count > 0:
-            outo.push(into.pop())
-            count -= 1
 
 
 # All the cards

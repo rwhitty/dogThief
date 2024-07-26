@@ -15,6 +15,7 @@ class Player:
             self.right = pile.pop()
 
     def discard_to(self, choice, pile):
+        choice = choice.lower()
         if choice == "left":
             pile.push(self.left)
             self.left = None
@@ -25,9 +26,9 @@ class Player:
             raise Exception("Invalid Input: card choice invalid for discard_to")
 
     def drunk_space(self, drunked, include_hand=True):
-        drunk_cards = drunked
+        drunk_cards = [drunked]
         if include_hand:
-            drunk_cards += [self.left.cards, self.right]
+            drunk_cards += [self.left, self.right]
         drunk_pile = Pile(self.name + "'s " + "Drunk Pile", drunk_cards)
         drunk_pile.flip_down_all()
         drunk_pile.shuffle()
@@ -35,4 +36,23 @@ class Player:
 
     def __str__(self):
         return self.name + ": " + str(self.left if self.left else "None") + ", " \
-                                + str(self.right if self.right else "None")
+            + str(self.right if self.right else "None")
+
+    def hand(self):
+        return [self.left.name.lower(), self.right.name.lower()]
+
+    def pileIntoHand(self, pile):
+        if pile.size() != 2:
+            raise Exception("Your pile isn't the right size!")
+        self.left = pile.cards[0]
+        self.right = pile.cards[1]
+
+    def whereCard(self, card_name):
+        if self.left.hasName(card_name) and self.right.hasName(card_name):
+            return 'both'
+        elif self.left.hasName(card_name):
+            return 'left'
+        elif self.right.hasName(card_name):
+            return 'right'
+        else:
+            return 'none'
