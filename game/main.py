@@ -10,12 +10,15 @@ def main():
         print(player)
     print()
     for player in itertools.cycle(game.getPlayers()):
-        print(player)
+        print(player.name + "'s Turn")
+        print('Your cards: ' + player.left.name + ', ' + player.right.name)
         if game.winCheck() is player:
             print(game.winCheck().name + " won!")
             break
         game.collect_move(player)
-        print(player)
+        print()
+        for player_out in game.getPlayers():
+            print(player_out)
         print()
     print('Good Game!')
 

@@ -27,18 +27,21 @@ class Game:
             inp = input("Player " + str(len(players) + 1) + ": ")
             if inp.lower() == 'done':
                 break
-            if (inp is not None) and (inp != "") and (inp not in players):
+            if (inp is not None) and (inp != "") and (inp.lower() not in toLower(players)):
                 players += [inp]
         return players
 
     def collect_move(self, player):
-        move = choose_name_from_options(['default', 'def', 'drunk', 'dru', 'seer', 'see'], 'Choose an action: ')
+        move = choose_name_from_options(['default', 'def', 'drunk', 'dru', 'seer', 'see', 'revealer', 'rev'],
+                                        'Choose an action: ')
         if move == 'default' or move == 'def':  # I want to make this a match/case thingy
             self.default(player)
         elif move == 'drunk' or move == 'dru':
             self.drunk(player)
         elif move == 'seer' or move == 'see':
             self.seer(player)
+        elif move == 'revealer' or move == 'rev':
+            self.revealer(player)
         else:
             raise Exception('Uhhhhhhhhh')
 
@@ -96,7 +99,15 @@ class Game:
         else:
             raise Exception('Uhhhhhhhhh')
 
-    # Next on list is revealer to test visible vs invisible card information
+    def revealer(self, player):
+        choo_player = choose_name_from_options([player.name for player in self.players], 'Choose a player to reveal: ')
+        for player in self.players:
+            if player.name.lower() == choo_player.lower():
+                choo_side = choose_name_from_options(['left', 'right'], 'Choose a side: ')
+                if choo_side == 'left':
+                    player.left.face_up = True
+                elif choo_side == 'right':
+                    player.left.face_up = True
 
     def winCheck(self):
         for player in self.getPlayers():

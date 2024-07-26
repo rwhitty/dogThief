@@ -29,7 +29,9 @@ class Pile:
         return out
 
     def shuffle(self):
-        np.random.shuffle(self.cards)
+        card_array = self.cards
+        np.random.shuffle(card_array)
+        self.cards = card_array
 
     def pop_type(self, typ):
         out_ind = []
@@ -88,16 +90,6 @@ class Pile:
     @staticmethod
     def merge(p1, p2, new_name):
         return Pile(new_name, p1.cards + p2.cards)
-
-
-def choose_name_from_options(options, prompt, catch='Valid input please!'):
-    picking = True
-    while picking:
-        choice = input(prompt).lower()
-        if choice in [option.lower() for option in options]:
-            return choice
-        else:
-            print(catch)
 
 
 # All the cards
