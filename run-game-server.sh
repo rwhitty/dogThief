@@ -6,4 +6,6 @@ if [ -n "$PID" ]; then
   kill $PID
 fi
 
+git pull origin main
+
 python3 game/App.py
