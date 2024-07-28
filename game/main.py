@@ -1,18 +1,17 @@
 import itertools
-
 from Game import *
 
 
 def main():
     game = Game()
     print()
-    for player in game.getPlayers():
-        print(player)
+    for player_in in game.getPlayers():
+        print(player_in)
     print()
     for player in itertools.cycle(game.getPlayers()):
         print(player.name + "'s Turn")
         print('Your cards: ' + player.left.name + ', ' + player.right.name)
-        if game.winCheck() is player:
+        if player in game.winCheck():  # if player is victory-eligible
             print(game.winCheck().name + " won!")
             break
         game.collect_move(player)

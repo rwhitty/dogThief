@@ -6,9 +6,11 @@ socketio = SocketIO(app)
 
 players = []
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @socketio.on('join_game')
 def handle_join_game(data):
@@ -16,6 +18,7 @@ def handle_join_game(data):
     if username not in players:
         players.append(username)
     emit('update_player_list', players, broadcast=True)
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0')
