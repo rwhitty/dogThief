@@ -1,22 +1,23 @@
 from Player import *
-
+from flask import Flask
+from flask_socketio import SocketIO
 
 class Game:
 
     def __init__(self, cards=all_cards):
+
         player_names = Game.collect_player_names()
         self.players = [Player(name) for name in player_names]
-        deal = cards.copy_without_type('Deal', 'Wolf')
-        wolves = cards.copy_only_type('Wolves', 'Wolf')
-        deal.shuffle()
+        self.pile = Pile()
+
         for player in self.players:
-            player.draw_from(deal)
-        self.draw = Pile.merge(deal, wolves, 'Draw')
-        self.draw.shuffle()
-        self.discard = Pile('Discard', [])
+            player.left = self.pile.deal_draw(1, exclude_type="Wolf")
+            player.right = self.pile.deal_draw(1, exlucde_type="Wolf")
+
 
     def getPlayers(self):
         return self.players
+    
 
     @staticmethod
     def collect_player_names():
@@ -30,6 +31,7 @@ class Game:
             if (inp is not None) and (inp != "") and (inp.lower() not in toLower(players)):
                 players += [inp]
         return players
+    
 
     def collect_move(self, player):
         move = choose_name_from_options(['default', 'def', 'drunk', 'dru', 'seer', 'see', 'revealer', 'rev'],
@@ -44,6 +46,10 @@ class Game:
             self.revealer(player)
         else:
             raise Exception('Uhhhhhhhhh')
+        
+    def apprentice_seer(self, player):
+        seen_cards = self.pile.deal_draw(3)
+        
 
     def default(self, player):
         picking = True
@@ -109,8 +115,19 @@ class Game:
                 elif choo_side == 'right':
                     player.left.face_up = True
 
+    
+
     def winCheck(self):
         for player in self.getPlayers():
             if player.victory():
                 return player
+        return None
+
+    
+    # Eventually this will render content to a specific player
+    def render_to_player(player):
+        return None
+    
+    
+    def render_to_all():
         return None

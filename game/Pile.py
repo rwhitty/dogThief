@@ -110,3 +110,99 @@ alpha_wolf = Card('Alpha–Wolf', 'Wolf')
 all_cards = Pile('Dogthief Cards', [werewolf, werewolf, villager, villager, villager, robber,
                                     troublemaker, seer, tanner, minion, mason, mason, doppelganger,
                                     drunk, insomniac, hunter, alpha_wolf])
+
+
+all_cards = [
+    Card("Alpha Wolf"),
+    Card("Apprentice Assassin"),
+    Card("Apprentice Seer"),
+    Card("Assassin"),
+    Card("Bodyguard"),
+    Card("Copycat"),
+    Card("Cupid"),
+    Card("Curator"),
+    Card("Diseased"),
+    Card("Doppelganger"),
+    Card("Dream Wolf"),
+    Card("Drunk"),
+    Card("Gremlin"),
+    Card("Hunter"),
+    Card("Insomniac"),
+    Card("Instigator"),
+    Card("Marksman"),
+    Card("Mason"),
+    Card("Mason"),
+    Card("Minion"),
+    Card("Mystic Wolf"),
+    Card("Paranormal Investigator"),
+    Card("Pickpocket"),
+    Card("Priest"),
+    Card("Renfield"),
+    Card("Revealer"),
+    Card("Robber"),
+    Card("Seer"),
+    Card("Sentinel"),
+    Card("Tanner"),
+    Card("The Count"),
+    Card("The Master"),
+    Card("Troublemaker"),
+    Card("Vampire"),
+    Card("Village Idiot"),
+    Card("Villager"),
+    Card("Villager"),
+    Card("Villager"),
+    Card("Werewolf"),
+    Card("Werewolf"),
+    Card("Witch")
+]
+
+class Pile:
+
+    def __init__(self):
+        self.draw_pile = all_cards[:] # The front of the list (index 0) is the top
+        np.random.shuffle(self.draw_pile)
+        self.discard_pile = [] # Ditto above
+
+
+    def deal_draw(self, n, exclude_type=None):
+
+        num_dealt = 0
+        dealt_cards = []
+
+        while num_dealt < n:
+
+            dealt_card = self.draw_pile.pop(0)
+
+            if dealt_card.type == exclude_type:
+                self.draw_pile.append(dealt_card)
+            else:
+                dealt_cards.append(dealt_card)
+                num_dealt += 1
+            
+            if len(self.draw_pile) == 0:
+                self.draw_pile = self.discard_pile
+                self.discard_pile = []
+                np.random.shuffle(self.draw_pile)
+        
+        return dealt_cards
+    
+
+    def deal_discard(self, n, exclude_type=None):
+
+        if n > len(self.discard_pile):
+            raise Exception("Not enough cards in discard pile!")
+
+        num_dealt = 0
+        dealt_cards = []
+
+        while num_dealt < n:
+
+            dealt_card = self.discard_pile.pop(0)
+
+            if dealt_card.type == exclude_type:
+                self.discard_pile.append(dealt_card)
+            else:
+                dealt_cards.append(dealt_card)
+                num_dealt += 1
+
+        return dealt_cards

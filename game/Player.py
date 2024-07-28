@@ -7,12 +7,7 @@ class Player:
         self.name = name
         self.left = left
         self.right = right
-
-    def draw_from(self, pile):
-        if self.left is None:
-            self.left = pile.pop()
-        if self.right is None:
-            self.right = pile.pop()
+        
 
     def discard_to(self, choice, pile):
         choice = choice.lower()
