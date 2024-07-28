@@ -1,0 +1,41 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogthief</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Join the Game</h1>
+    <form id="join-form">
+        <label for="username">Your Dogthief Name:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Join Game</button>
+    </form>
+    <h2>Players:</h2>
+    <ul id="player-list"></ul>
+
+    <script>
+        var socket = io();
+
+        document.getElementById('join-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var username = document.getElementById('username').value;
+            socket.emit('join_game', { username: username });
+        });
+
+        socket.on('update_player_list', function(players) {
+            var playerList = document.getElementById('player-list');
+            playerList.innerHTML = '';
+            players.forEach(function(player) {
+                var li = document.createElement('li');
+                li.textContent = player;
+                playerList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>
