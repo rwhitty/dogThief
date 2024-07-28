@@ -8,4 +8,4 @@ fi
 
 git pull origin main
 
-python3 game/App.py
+python3 /home/ec2-user/projects/dogthief/game/App.py
