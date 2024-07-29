@@ -16,9 +16,6 @@ class Card:
     def __str__(self):
         return self.name if self.face_up else '[  ?  ]'
 
-    def describe(self):
-        return "The " + self.name + "." + self.desc
-
     def flip_up(self):
         self.face_up = True
 
