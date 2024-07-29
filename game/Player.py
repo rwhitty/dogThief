@@ -21,7 +21,7 @@ class Player:
         return play_pile
 
     def __str__(self):
-        return self.name + ": " + str(self.left) + ", " + str(self.right)
+        return self.name + ":\t" + str(self.left) + "\t" + str(self.right)
 
     def draw_from(self, pile):
         if not self.left:
