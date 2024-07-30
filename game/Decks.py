@@ -4,42 +4,24 @@ from Pile import *
 class Decks:
 
     def __init__(self):
-        self.draw_pile = Pile(all_cards)  # The front of the list (index 0) is the top
-        self.discard_pile = Pile([])  # Ditto above
-        np.random.shuffle(self.draw_pile)
+        self.draw = Pile(all_cards)  # The front of the list (index 0) is the top
+        self.discard = Pile([])  # Ditto above
+        self.draw.shuffle()
 
-    def deal_draw(self, n, exclude_type=None):
+    def deal_to_player(self, player):  # exclude_type is easier to implement outside
+        if self.draw.size() < 1:
+            self.shuffle_all()
+        player.draw_from(self.draw)
 
-        dealt_cards = []
-        index = 0
-
-        while len(dealt_cards) < n:
-            if self.draw_pile[-1] != exclude_type:
-                dealt_cards.append(self.draw_pile.pop(index))
-            else:
-                index += 1
-
-            if len(self.draw_pile) == 0:
-                self.draw_pile = self.discard_pile
-                self.discard_pile = []
-                np.random.shuffle(self.draw_pile)
-
-        np.random.shuffle(self.discard_pile)
-        return dealt_cards
-
-    def deal_discard(self, n, exclude_type=None):
-
-        if n > len(self.discard_pile):
+    def disc_to_player(self, player):  # exclude_type is easier to implement outside
+        if self.discard.size() < 1:
             raise Exception("Not enough cards in discard pile!")
+        player.draw_from(self.discard)
 
-        dealt_cards = []
-        index = 0
+    def shuffle_all(self):
+        self.draw.cards = self.discard.cards
+        self.discard.cards = []
+        self.draw.shuffle()
 
-        while len(dealt_cards) < n:
-            if self.discard_pile[-1] != exclude_type:
-                dealt_cards.append(self.discard_pile.pop(index))
-            else:
-                index += 1
-
-        np.random.shuffle(self.discard_pile)
-        return dealt_cards
+    def draw_empty(self, n=1):
+        return self.draw.size() < n

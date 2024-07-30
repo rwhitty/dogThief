@@ -1,6 +1,5 @@
 from Player import *
-
-
+from Decks import *
 #  from flask import Flask
 #  from flask_socketio import SocketIO
 
@@ -12,26 +11,14 @@ class Game:
         player_names = Game.collect_player_names()
         self.players = [Player(name) for name in player_names]
 
-        self.draw_pile = Pile(all_cards)
-        self.discard_pile = Pile([])
+        self.deck = Decks()
 
-        wolves = self.draw_pile.pop_type('Wolf')
-        self.draw_pile.shuffle()
+        wolves = self.deck.draw.pop_type('Wolf')
         for player in self.players:
-            player.draw_from(self.draw_pile)
+            self.deck.deal_to_player(player)
 
-        self.draw_pile.merge_w(wolves)
-
-        """
-        self.decks = Decks()
-
-        for player in self.players:
-            player.left = self.pile.deal_draw(1, exclude_type="Wolf")
-            player.right = self.pile.deal_draw(1, exclude_type="Wolf")
-        """
-
-    def getPlayers(self):
-        return self.players
+        self.deck.draw.merge_w(wolves)
+        self.deck.draw.shuffle()
 
     @staticmethod
     def collect_player_names():
@@ -46,10 +33,18 @@ class Game:
                 player_names += [inp]
         return player_names
 
+    def getPlayers(self):
+        return self.players
+
+    def removePlayer(self, player):
+        self.players.remove(player)
+
     def collect_move(self, player):
-        move = choose_name_from_options(['default', 'def', 'drunk', 'dru', 'seer', 'see', 'revealer', 'rev'],
+        move = choose_name_from_options(['default', 'def', 'drunk', 'dru', 'seer', 'see', 'revealer', 'rev', 'quit'],
                                         'Choose an action: ')
-        if move == 'default' or move == 'def':  # I want to make this a match/case thingy
+        if move == 'quit':
+            self.removePlayer(player)
+        elif move == 'default' or move == 'def':  # I want to make this a match/case thingy
             self.default(player)
         elif move == 'drunk' or move == 'dru':
             self.drunk(player)
@@ -64,22 +59,24 @@ class Game:
     #       seen_cards = self.pile.deal_draw(3)"""
 
     def default(self, player):
-        player.discard_to(self.discard_pile)
-        player.draw_from(self.draw_pile)
+        player.discard_to(self.deck.discard)
+        self.deck.deal_to_player(player)
 
     def drunk(self, player):
-        drunk_pile = player.play_space([self.draw_pile.pop()])
+        if self.deck.draw_empty():
+            self.deck.shuffle_all()
+        drunk_pile = player.play_space([self.deck.draw.pop()])
         print(drunk_pile)
-        drunk_pile.discard(self.discard_pile)
+        drunk_pile.discard(self.deck.discard)
         player.clear()
         player.draw_from(drunk_pile)
 
     def seer(self, player):  # Technically Apprentice Seer
-        seer_pile = player.play_space(self.draw_pile.pop_top(3), False)
+        seer_pile = player.play_space(self.deck.draw.pop_top(3), False)
         print(seer_pile)
-        seer_pile.discard(self.discard_pile)
+        seer_pile.discard(self.deck.discard)
         seer_pile.shuffle()
-        self.discard_pile.push(seer_pile.pop())
+        self.deck.discard.push(seer_pile.pop())
         rem_card = seer_pile.pop()
         print()
         print('Remaining Card: ' + rem_card.name)
@@ -87,12 +84,12 @@ class Game:
         choice = choose_name_from_options([rem_card.name, player.left.name, player.right.name],
                                           'Choose a card to discard: ')
         if rem_card.hasName(choice):
-            self.discard_pile.push(rem_card)
+            self.deck.discard.push(rem_card)
         elif player.left.hasName(choice):
-            self.discard_pile.push(player.left)
+            self.deck.discard.push(player.left)
             player.left = rem_card
         elif player.right.hasName(choice):
-            self.discard_pile.push(player.right)
+            self.deck.discard.push(player.right)
             player.right = rem_card
         else:
             raise Exception('Uhhhhhhhhh')
