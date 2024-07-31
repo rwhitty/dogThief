@@ -6,13 +6,26 @@ class Pile:
     def __init__(self, cards):
         self.cards = cards
 
-    def pop(self):
-        return self.cards.pop()
+    def pop(self, index=-1):
+        return self.cards.pop(index)
 
     def pop_top(self, n=1):
         out = self.cards[-n:]
         del self.cards[-n:]
         return out
+
+    def pop_type(self, typ):
+        out, out_ind = [], []
+        for num, card in enumerate(self.cards):
+            if card.isType(typ):
+                out_ind.append(num)
+                out.append(card)
+        for ind in sorted(out_ind, reverse=True):
+            del self.cards[ind]
+        return Pile(out)
+
+    def peek(self, index=-1):
+        return self.cards[index]
 
     def push(self, card):
         self.cards.append(card)
@@ -25,20 +38,10 @@ class Pile:
         np.random.shuffle(card_list)
         self.cards = card_list
 
-    def pop_type(self, typ):
-        out, out_ind = [], []
-        for num, card in enumerate(self.cards):
-            if card.isType(typ):
-                out_ind.append(num)
-                out.append(card)
-        for ind in sorted(out_ind, reverse=True):
-            del self.cards[ind]
-        return Pile(out)
-
     def __str__(self):
         out = ""
         for card in self.cards:
-            out += " " + card.name
+            out += "    " + card.name
         return out
 
     def toList(self):
@@ -49,7 +52,6 @@ class Pile:
 
     def merge_w(self, p2):
         self.cards.extend(p2.cards)
-        self.shuffle()
 
     def flip_up_all(self):
         for card in self.cards:
