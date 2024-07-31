@@ -2,6 +2,8 @@ import numpy as np
 
 
 def choose_name_from_options(options, prompt, catch='Valid input please!'):
+    if not options or len(options) < 1:
+        return None
     picking = True
     while picking:
         choice = input(prompt).lower()

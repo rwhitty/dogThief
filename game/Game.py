@@ -72,6 +72,8 @@ class Game:
         player.draw_from(drunk_pile)
 
     def seer(self, player):  # Technically Apprentice Seer
+        if self.deck.draw_empty(3):
+            self.deck.shuffle_all()
         seer_pile = player.play_space(self.deck.draw.pop_top(3), False)
         print(seer_pile)
         seer_pile.discard(self.deck.discard)
@@ -95,7 +97,7 @@ class Game:
             raise Exception('Uhhhhhhhhh')
 
     def revealer(self, act_player):
-        choo_player = choose_name_from_options([player.name for player in self.players if player != act_player],
+        choo_player = choose_name_from_options([player.name for player in self.players],
                                                'Choose a player to reveal: ')
         for player in self.players:
             if player.name.lower() == choo_player.lower():
